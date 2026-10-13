@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة أتقن C++ التعليمية | C++ Mastery Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0f1d;
+      --bg-card: #151c2e;
+      --bg-card-hover: #1e293b;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --accent-hover: #0284c7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #232d42;
+      --code-bg: #0d1322;
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.2);
+      --error: #f43f5e;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Scrollbar Design */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+
+    /* Sidebar Styling */
+    aside {
+      width: 350px;
+      background-color: var(--bg-card);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .brand {
+      padding: 24px 20px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-icon {
+      background: var(--accent-glow);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      border: 1px solid var(--accent);
+    }
+
+    /* LMS Dashboard Widget */
+    .lms-progress-box {
+      padding: 18px 20px;
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .progress-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background-color: var(--bg-dark);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8, #10b981);
+      width: 0%;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .search-box {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      outline: none;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .nav-lessons {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+
+    .module-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 18px 10px 8px 10px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .lesson-btn {
+      width: 100%;
+      text-align: right;
+      padding: 12px 14px;
+      background: none;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 0.92rem;
+    }
+
+    .lesson-btn:hover {
+      background-color: var(--bg-card-hover);
+      border-color: var(--border);
+    }
+
+    .lesson-btn.active {
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
+      color: #000;
+      font-weight: 700;
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .lesson-btn.active .lesson-status-icon {
+      color: #000;
+    }
+
+    .lesson-status-icon {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Content Area */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 35px 45px;
+      background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.03), transparent 40%);
+    }
+
+    .content-header {
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .header-info h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .actions-group {
+      display: flex;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .action-btn {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+    }
+
+    .action-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .complete-btn.completed {
+      background: var(--success);
+      color: #fff;
+      border-color: var(--success);
+      box-shadow: 0 0 15px var(--success-glow);
+    }
+
+    .content-body p {
+      line-height: 1.9;
+      color: #cbd5e1;
+      margin-bottom: 22px;
+      font-size: 1.08rem;
+    }
+
+    .content-body ul {
+      margin-right: 25px;
+      margin-bottom: 25px;
+      color: #cbd5e1;
+      line-height: 1.8;
+    }
+
+    .content-body ul li {
+      margin-bottom: 8px;
+    }
+
+    .content-body h3 {
+      font-size: 1.25rem;
+      color: var(--text-main);
+      margin: 25px 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .code-block {
+      background-color: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      font-family: 'Fira Code', monospace;
+      color: #38bdf8;
+      direction: ltr;
+      text-align: left;
+      white-space: pre-wrap;
+      margin-bottom: 30px;
+      overflow-x: auto;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Quiz Section Styling */
+    .quiz-section {
+      margin-top: 35px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .quiz-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-question {
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: #f1f5f9;
+      font-size: 1.05rem;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .quiz-option-btn {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 14px 18px;
+      text-align: right;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .quiz-option-btn:hover {
+      border-color: var(--accent);
+      background-color: var(--bg-card-hover);
+    }
+
+    .quiz-option-btn.correct {
+      background-color: var(--success);
+      color: white;
+      border-color: var(--success);
+      font-weight: bold;
+    }
+
+    .quiz-option-btn.wrong {
+      background-color: var(--error);
+      color: white;
+      border-color: var(--error);
+    }
+
+    .quiz-feedback {
+      font-weight: 700;
+      margin-top: 15px;
+      padding: 14px;
+      border-radius: 8px;
+      display: none;
+      line-height: 1.6;
+    }
+
+    /* Embedded Compiler Section */
+    .compiler-section {
+      margin-top: 35px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background-color: var(--bg-card);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .compiler-header {
+      background-color: #0d1322;
+      padding: 14px 20px;
+      font-weight: 700;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 460px;
+      border: none;
+    }
+
+    /* Print / PDF Styling */
+    @media print {
+      body { background-color: #fff; color: #000; display: block; height: auto; overflow: visible; }
+      aside, .compiler-section, .quiz-section, .actions-group, .search-box { display: none !important; }
+      main { padding: 0; overflow: visible; background: none; }
+      .content-header h1 { color: #0284c7; }
+      .content-body p, .content-body ul { color: #1e293b; }
+      .code-block { background-color: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- القائمة الجانبية ولوحة تحكم المنصة (LMS Sidebar) -->
+  <aside>
+    <div class="brand">
+      <div class="brand-icon">💻</div>
+      <span>أكاديمية C++ التعليمية</span>
+    </div>
+    
+    <!-- لوحة تتبع الإنجاز -->
+    <div class="lms-progress-box">
+      <div class="progress-title">
+        <span>نسبة الإنجاز في الكورس</span>
+        <span id="progressPercentage">0%</span>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" onkeyup="filterLessons()" placeholder="🔍 بحث في الدروس والمواضيع...">
+    </div>
+    
+    <div class="nav-lessons" id="lessonsList">
+      <div class="module-title">1. الأساسيات (Fundamentals)</div>
+      <button class="lesson-btn active" id="btn-intro" onclick="loadLesson('intro', event)">
+        <span>مقدمة وبنية برنامج C++</span>
+        <span class="lesson-status-icon" id="icon-intro">⚪</span>
+      </button>
+      <button class="lesson-btn" id="btn-variables" onclick="loadLesson('variables', event)">
+        <span>المتغيرات وأنواع البيانات</span>
+        <span class="lesson-status-icon" id="icon-variables">⚪</span>
+      </button>
+      <button class="lesson-btn" id="btn-conditions" onclick="loadLesson('conditions', event)">
+        <span>أدوات الشرط (If / Else)</span>
+        <span class="lesson-status-icon" id="icon-conditions">⚪</span>
+      </button>
+      <button class="lesson-btn" id="btn-loops" onclick="loadLesson('loops', event)">
+        <span>الحلقات التكرارية (Loops)</span>
+        <span class="lesson-status-icon" id="icon-loops">⚪</span>
+      </button>
+
+      <div class="module-title">2. الهياكل والدوال</div>
+      <button class="lesson-btn" id="btn-functions" onclick="loadLesson('functions', event)">
+        <span>الدوال (Functions)</span>
+        <span class="lesson-status-icon" id="icon-functions">⚪</span>
+      </button>
+      <button class="lesson-btn" id="btn-arrays" onclick="loadLesson('arrays', event)">
+        <span>المصفوفات (Arrays)</span>
+        <span class="lesson-status-icon" id="icon-arrays">⚪</span>
+      </button>
+
+      <div class="module-title">3. إدارة الذاكرة والتوجيه</div>
+      <button class="lesson-btn" id="btn-pointers" onclick="loadLesson('pointers', event)">
+        <span>المؤشرات (Pointers)</span>
+        <span class="lesson-status-icon" id="icon-pointers">⚪</span>
+      </button>
+
+      <div class="module-title">4. البرمجة الكائنية OOP</div>
+      <button class="lesson-btn" id="btn-oop_intro" onclick="loadLesson('oop_intro', event)">
+        <span>الفئات والكائنات (Classes)</span>
+        <span class="lesson-status-icon" id="icon-oop_intro">⚪</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- منطقة عرض الشرح والـ LMS Tools -->
+  <main>
+    <div class="content-header">
+      <div class="header-info">
+        <h1 id="lessonTitle">مقدمة وبنية برنامج C++</h1>
+        <p id="lessonSubtitle" style="color: var(--text-muted);">تعرف على الهيكل الأساسي لبرنامج C++ وكيفية طباعة أول جملة.</p>
+      </div>
+      <div class="actions-group">
+        <button class="action-btn complete-btn" id="completeBtn" onclick="toggleComplete()">✅ تحديد كمكتمل</button>
+        <button class="action-btn" onclick="window.print()">🖨️ طباعة PDF</button>
+      </div>
+    </div>
+
+    <div class="content-body" id="lessonContent">
+      <p>تعتبر لغة C++ من أقوى لغات البرمجة وأسرعها. يتم تنظيم أي برنامج C++ عبر استدعاء المكتبات الأساسية ثم تنفيذ الكود داخل الدالة الرئيسية <code>main()</code>.</p>
+      
+      <h3>⚡ الكود التوضيحي:</h3>
+      <div class="code-block">#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    cout &lt;&lt; "Hello, World! Welcome to C++" &lt;&lt; endl;
+    return 0;
+}</div>
+    </div>
+
+    <!-- قسم الاختبار التفاعلي (Quiz) -->
+    <div class="quiz-section">
+      <div class="quiz-title">📝 اختبر فهمك (Quiz)</div>
+      <div class="quiz-question" id="quizQuestion">ما هي الدالة الأساسية التي تبدأ منها عملية تنفيذ أي برنامج C++؟</div>
+      <div class="quiz-options" id="quizOptions">
+        <button class="quiz-option-btn" onclick="checkAnswer(0, 1)">أ) start()</button>
+        <button class="quiz-option-btn" onclick="checkAnswer(1, 1)">ب) main()</button>
+        <button class="quiz-option-btn" onclick="checkAnswer(2, 1)">ج) begin()</button>
+      </div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+    </div>
+
+    <!-- مفسر أكواد C++ تفاعلي مدمج -->
+    <div class="compiler-section">
+      <div class="compiler-header">💻 جرب الكود بنفسك (C++ Online Compiler)</div>
+      <iframe src="https://www.onlinegdb.com/online_c++_compiler" title="C++ Compiler"></iframe>
+    </div>
+  </main>
+
+  <script>
+    // قاعدة بيانات الدروس والاختبارات
+    const lessonsData = {
+      intro: {
+        title: "مقدمة وبنية برنامج C++",
+        subtitle: "تعرف على الهيكل الأساسي لبرنامج C++ وكيفية طباعة أول جملة.",
+        content: `
+          <p>لغة C++ هي لغة مجمعة (Compiled Language) عالية الأداء. يبدأ كل برنامج باستدعاء المكتبة <code>#include &lt;iostream&gt;</code> لإتاحة عمليات الإدخال والإخراج.</p>
+          <h3>⚡ الكود التوضيحي:</h3>
+          <div class="code-block">#include &lt;iostream&gt;\nusing namespace std;\n\nint main() {\n    cout &lt;&lt; "Hello World!" &lt;&lt; endl;\n    return 0;\n}</div>
+        `,
+        quiz: {
+          question: "ما هي الدالة الأساسية التي تبدأ منها عملية تنفيذ أي برنامج C++؟",
+          options: ["أ) start()", "ب) main()", "ج) begin()"],
+          correct: 1,
+          explanation: "إجابة صحيحة! الدالة main() هي نقطة الدخول والبداية الإجبارية لأي برنامج في C++."
+        }
+      },
+      variables: {
+        title: "المتغيرات وأنواع البيانات (Variables & Data Types)",
+        subtitle: "تخزين البيانات في الذاكرة وتحديد أنواعها المختلفة.",
+        content: `
+          <p>تستخدم المتغيرات لحجز أماكن في الذاكرة لتخزين البيانات مثل الأعداد الصحيحة والنصوص.</p>
+          <ul>
+            <li><code>int</code>: للأعداد الصحيحة (مثل 10, -5)</li>
+            <li><code>double</code>: للأعداد العشرية (مثل 3.14)</li>
+            <li><code>string</code>: للنصوص (مثل "Anwar")</li>
+          </ul>
+          <h3>⚡ الكود التوضيحي:</h3>
+          <div class="code-block">#include &lt;iostream&gt;\n#include &lt;string&gt;\nusing namespace std;\n\nint main() {\n    int age = 20;\n    string name = "Anwar";\n    cout &lt;&lt; "Name: " &lt;&lt; name &lt;&lt; " | Age: " &lt;&lt; age &lt;&lt; endl;\n    return 0;\n}</div>
+        `,
+        quiz: {
+          question: "أي من أنواع البيانات التالية يُستخدم لتخزين الأعداد الصحيحة (مثل 25)؟",
+          options: ["أ) string", "ب) double", "ج) int"],
+          correct: 2,
+          explanation: "إجابة صحيحة! النوع int يُستخدم للأعداد الصحيحة."
+        }
+      },
+      conditions: {
+        title: "أدوات الشرط (If / Else & Switch)",
+        subtitle: "اتخاذ القرارات والتحكم في مسار تنفيذ البرنامج.",
+        content: `
+          <p>تتيح لك أدوات الشرط تنفيذ تعليمات برمجية معينة بناءً على تحقق شرط منطقي محدد.</p>
+          <h3>⚡ الكود التوضيحي:</h3>
+          <div class="code-block">#include &lt;iostream&gt;\nusing namespace std;\n\nint main() {\n    int score = 85;\n    if (score >= 50) {\n        cout &lt;&lt; "ناجح!" &lt;&lt; endl;\n    } else {\n        cout &lt;&lt; "راسب!" &lt;&lt; endl;\n    }\n    return 0;\n}</div>
+        `,
+        quiz: {
+          question: "ما الكلمة المفتاحية المستخدمة في C++ لإنشاء شرط بديل إذا لم يتحقق الشرط الأول؟",
+          options: ["أ) else", "ب) then", "ج) check"],
+          correct: 0,
+          explanation: "إجابة صحيحة! تُستخدم else لتنفيذ الكود في حال لم يتحقق شرط if الأول."
+        }
+      },
+      loops: {
+        title: "الحلقات التكرارية (For, While Loops)",
+        subtitle: "تكرار تنفيذ الأكواد للتقليل من كتابة الكود المكرر.",
+        content: `
+          <p>تُستخدم الحلقات للتكرار المباشر، مثل جملة <code>for</code> عندما يكون عدد التكرارات معروفاً.</p>
+          <h3>⚡ الكود التوضيحي:</h3>
+          <div class="code-block">#include &lt;iostream&gt;\nusing namespace std;\n\nint main() {\n    for(int i = 1; i <= 5; i++) {\n        cout &lt;&lt; i &lt;&lt; endl;\n    }\n    return 0;\n}</div>
+        `,
+        quiz: {
+          question: "أي حلقة تكرارية يُفضل استخدامها عادةً عندما يكون عدد مرات التكرار معروفاً مسبقاً؟",
+          options: ["أ) while", "ب) for", "ج) do-while"],
+          correct: 1,
+          explanation: "إجابة صحيحة! حلقة for مخصصة للحلقات ذات العدد المحدد مسبقاً."
+        }
+      },
+      functions: {
+        title: "الدوال (Functions)",
+        subtitle: "تقسيم البرنامج إلى وحدات مستقلة قابلة لإعادة الاستخدام.",
+        content: `
+          <p>الدالة هي كتلة من الكود تأخذ مدخلات وتُرجع قيمة عند استدعائها.</p>
+          <h3>⚡ الكود التوضيحي:</h3>
+          <div class="code-block">#include &lt;iostream&gt;\nusing namespace std;\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint main() {\n    cout &lt;&lt; add(10, 20); \n    return 0;\n}</div>
+        `,
+        quiz: {
+          question: "ما هي الكلمة المستخدمة لإرجاع القيمة الناتجة من الدالة في C++؟",
+          options: ["أ) send", "ب) output", "ج) return"],
+          correct: 2,
+          explanation: "إجابة صحيحة! تُستخدم return لإعادة القيمة من الدالة."
+        }
+      },
+      arrays: {
+        title: "المصفوفات (Arrays)",
+        subtitle: "تخزين مجموعة عناصر من نفس نوع البيانات في كتلة متصلة.",
+        content: `
+          <p>المصفوفة تتيح لك تخزين عدة قيم تحت متغير واحد ويتم الوصول لكل عنصر عبر الفهرس (Index) المبتدئ من 0.</p>
+          <h3>⚡ الكود التوضيحي:</h3>
+          <div class="code-block">#include &lt;iostream&gt;\nusing namespace std;\n\nint main() {\n    int arr[3] = {10, 20, 30};\n    cout &lt;&lt; arr[0];\n    return 0;\n}</div>
+        `,
+        quiz: {
+          question: "بأي رقم يبدأ مؤشر (Index) العناصر في المصفوفات بلغة C++؟",
+          options: ["أ) يبدأ من 0", "ب) يبدأ من 1", "ج) يبدأ من -1"],
+          correct: 0,
+          explanation: "إجابة صحيحة! الفهرسة في C++ تبدأ دائماً من الرقم صفر (0)."
+        }
+      },
+      pointers: {
+        title: "المؤشرات (Pointers)",
+        subtitle: "التعامل المباشر مع عناوين الذاكرة (RAM).",
+        content: `
+          <p>المؤشر هو متغير يخزن عنوان متغير آخر في الذاكرة. يُرمز له بالرمز <code>*</code>.</p>
+          <h3>⚡ الكود التوضيحي:</h3>
+          <div class="code-block">#include &lt;iostream&gt;\nusing namespace std;\n\nint main() {\n    int val = 100;\n    int* ptr = &val;\n    cout &lt;&lt; *ptr;\n    return 0;\n}</div>
+        `,
+        quiz: {
+          question: "ما هو الرمز المستخدم للحصول على عنوان (Address) متغير في الذاكرة؟",
+          options: ["أ) *", "ب) &", "ج) #"],
+          correct: 1,
+          explanation: "إجابة صحيحة! رمز & (Address-of operator) يُستخدم لاستخراج عنوان المتغير في الذاكرة."
+        }
+      },
+      oop_intro: {
+        title: "الفئات والكائنات (Classes & Objects)",
+        subtitle: "أساس البرمجة كائنية التوجه لنمدجة عناصر العالم الحقيقي.",
+        content: `
+          <p>الـ <code>Class</code> تعتبر النموذج الأصلي، بينما الـ <code>Object</code> هو المتغير الفعلي الناتج عنها.</p>
+          <h3>⚡ الكود التوضيحي:</h3>
+          <div class="code-block">#include &lt;iostream&gt;\nusing namespace std;\n\nclass Car {\npublic:\n    string brand;\n};\n\nint main() {\n    Car myCar;\n    myCar.brand = "Toyota";\n    cout &lt;&lt; myCar.brand;\n    return 0;\n}</div>
+        `,
+        quiz: {
+          question: "ماذا يسمى النسخة أو المتغير الفعلي المنشأ من الـ Class؟",
+          options: ["أ) Object (كائن)", "ب) Function", "ج) Pointer"],
+          correct: 0,
+          explanation: "إجابة صحيحة! Object هو الكائن الفعلي المنشأ من صنف Class."
+        }
+      }
+    };
+
+    let currentLessonKey = 'intro';
+    
+    // إدارة تقدم الطالب (LMS Progress State)
+    let completedLessons = JSON.parse(localStorage.getItem('cpp_completed_lessons')) || {};
+
+    function initProgress() {
+      const keys = Object.keys(lessonsData);
+      keys.forEach(key => {
+        const icon = document.getElementById(`icon-${key}`);
+        if(completedLessons[key]) {
+          if(icon) icon.innerText = "🟢";
+        } else {
+          if(icon) icon.innerText = "⚪";
+        }
+      });
+      updateProgressBar();
+    }
+
+    function updateProgressBar() {
+      const keys = Object.keys(lessonsData);
+      const total = keys.length;
+      const completedCount = keys.filter(k => completedLessons[k]).length;
+      const percentage = Math.round((completedCount / total) * 100);
+
+      document.getElementById('progressPercentage').innerText = percentage + '%';
+      document.getElementById('progressBar').style.width = percentage + '%';
+    }
+
+    function toggleComplete() {
+      completedLessons[currentLessonKey] = !completedLessons[currentLessonKey];
+      localStorage.setItem('cpp_completed_lessons', JSON.stringify(completedLessons));
+      
+      const icon = document.getElementById(`icon-${currentLessonKey}`);
+      const btn = document.getElementById('completeBtn');
+
+      if(completedLessons[currentLessonKey]) {
+        if(icon) icon.innerText = "🟢";
+        btn.classList.add('completed');
+        btn.innerText = "✅ مكتمل";
+      } else {
+        if(icon) icon.innerText = "⚪";
+        btn.classList.remove('completed');
+        btn.innerText = "✅ تحديد كمكتمل";
+      }
+      updateProgressBar();
+    }
+
+    function loadLesson(key, event) {
+      currentLessonKey = key;
+      const lesson = lessonsData[key];
+      if(!lesson) return;
+
+      document.getElementById('lessonTitle').innerText = lesson.title;
+      document.getElementById('lessonSubtitle').innerText = lesson.subtitle;
+      document.getElementById('lessonContent').innerHTML = lesson.content;
+
+      // تحديث حالة زر الإكمال للدرس الحالي
+      const btn = document.getElementById('completeBtn');
+      if(completedLessons[key]) {
+        btn.classList.add('completed');
+        btn.innerText = "✅ مكتمل";
+      } else {
+        btn.classList.remove('completed');
+        btn.innerText = "✅ تحديد كمكتمل";
+      }
+
+      // تحديث واجهة الاختبار (Quiz)
+      document.getElementById('quizQuestion').innerText = lesson.quiz.question;
+      const optionsContainer = document.getElementById('quizOptions');
+      optionsContainer.innerHTML = '';
+      
+      lesson.quiz.options.forEach((opt, idx) => {
+        const b = document.createElement('button');
+        b.className = 'quiz-option-btn';
+        b.innerText = opt;
+        b.onclick = () => checkAnswer(idx, lesson.quiz.correct);
+        optionsContainer.appendChild(b);
+      });
+
+      document.getElementById('quizFeedback').style.display = 'none';
+
+      // تحديث الأزرار النشطة في القائمة الجانبية
+      document.querySelectorAll('.lesson-btn').forEach(b => b.classList.remove('active'));
+      if(event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+      } else {
+        const targetBtn = document.getElementById(`btn-${key}`);
+        if(targetBtn) targetBtn.classList.add('active');
+      }
+    }
+
+    function checkAnswer(selectedIndex, correctIndex) {
+      const lesson = lessonsData[currentLessonKey];
+      const optionButtons = document.querySelectorAll('.quiz-option-btn');
+      const feedback = document.getElementById('quizFeedback');
+
+      optionButtons.forEach((b, idx) => {
+        b.disabled = true;
+        if(idx === correctIndex) b.classList.add('correct');
+        else if(idx === selectedIndex) b.classList.add('wrong');
+      });
+
+      feedback.style.display = 'block';
+      if(selectedIndex === correctIndex) {
+        feedback.style.backgroundColor = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.border = '1px solid #10b981';
+        feedback.style.color = '#34d399';
+        feedback.innerText = lesson.quiz.explanation;
+      } else {
+        feedback.style.backgroundColor = 'rgba(244, 63, 94, 0.15)';
+        feedback.style.border = '1px solid #f43f5e';
+        feedback.style.color = '#fb7185';
+        feedback.innerText = "إجابة خاطئة. راجع الشرح بالأعلى أو حاول مجدداً.";
+      }
+    }
+
+    function filterLessons() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('.lesson-btn').forEach(btn => {
+        const text = btn.innerText.toLowerCase();
+        btn.style.display = text.includes(input) ? 'flex' : 'none';
+      });
+    }
+
+    // تشغيل النظام وتتبع الإنجاز عند تحميل الصفحة
+    window.onload = function() {
+      initProgress();
+      loadLesson('intro');
+    };
+  </script>
+</body>
+</html>
